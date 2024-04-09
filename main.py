@@ -11,8 +11,8 @@ def read_game(stream):
     reading_comments = True
     white_elo = 0
     black_elo = 0
-    result = -1 # 0:white 1:black 2:draw
-    time_control = 0 # main time in seconds
+    result = -1  # 0:white 1:black 2:draw
+    time_control = 0  # main time in seconds
     normal_termination = False
 
     count = 0
@@ -46,15 +46,13 @@ def read_game(stream):
                     result = 2
         count += 1
 
-
     if white_elo > 2000 and black_elo > 2000 and result != -1 and time_control >= 180 and normal_termination:
-            line = stream.readline().strip()
-            return line
+        line = stream.readline().strip()
+        return line
     else:
         stream.readline()
         stream.readline()
         return ""
-
 
 
 def read_games_to_txt(input_path, output_path):
@@ -131,7 +129,6 @@ def read_fen_to_datasets(input_path, output_path, dataset_size, dataset_amount):
 
                 target_tensor = torch.tensor(result_val, dtype=torch.float32)
 
-
                 data_list = []
 
                 board = chess.Board(fen)
@@ -148,11 +145,11 @@ def read_fen_to_datasets(input_path, output_path, dataset_size, dataset_amount):
                         data_list.append(pcs)
 
                 turn = board.turn
-                turn_board = numpy.full([8,8], turn).astype(numpy.float32)
+                turn_board = numpy.full([8, 8], turn).astype(numpy.float32)
                 data_list.append(turn_board)
 
                 castling_rights = board.castling_rights
-                castling_board = numpy.full([8,8], False)
+                castling_board = numpy.full([8, 8], False)
                 castling_board[0][0] = bool(castling_rights & chess.BB_A8)
                 castling_board[0][7] = bool(castling_rights & chess.BB_H8)
                 castling_board[7][0] = bool(castling_rights & chess.BB_A1)
@@ -168,7 +165,7 @@ def read_fen_to_datasets(input_path, output_path, dataset_size, dataset_amount):
                     ep_board = numpy.reshape(pcs, [8, 8])
                     data_list.append(ep_board)
                 else:
-                    ep_board = numpy.full([8,8], 0, dtype=numpy.float32)
+                    ep_board = numpy.full([8, 8], 0, dtype=numpy.float32)
                     data_list.append(ep_board)
 
                 data_tensor = torch.tensor(numpy.array(data_list))
@@ -179,10 +176,8 @@ def read_fen_to_datasets(input_path, output_path, dataset_size, dataset_amount):
             x_train = torch.tensor(numpy.array(dataset_input_list))
             y_train = torch.tensor(numpy.array(dataset_target_list))
 
-            ds = TensorDataset(x_train,y_train)
+            ds = TensorDataset(x_train, y_train)
             torch.save(ds, f"{output_path}/dataset_id_{dataset_id + 1}")
-
-
 
 
 def main():
@@ -197,7 +192,6 @@ def main():
     input_file_path = "Data/no_draw_filtered_fen_2024-01(34418656).txt"
     output_folder_path = "Data/datasets_2024-01_no_draw"
     read_fen_to_datasets(input_file_path, output_folder_path, 2000000, 1)
-
 
 
 if __name__ == "__main__":
